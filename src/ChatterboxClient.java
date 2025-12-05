@@ -9,6 +9,8 @@ import java.net.Socket;
 import java.nio.charset.StandardCharsets;
 import java.util.Scanner;
 
+import javax.imageio.IIOException;
+
 /**
  * A simple command-line chat client for the Chatterbox server.
  *
@@ -287,7 +289,11 @@ public class ChatterboxClient {
      */
     public void streamChat() throws IOException {
         // throw new UnsupportedOperationException("Chat streaming not yet implemented. Implement streamChat() and remove this exception!");
-        printIncomingChats();
+        Thread incoming = new Thread(() -> printIncomingChats());
+        Thread outgoing = new Thread(() -> sendOutgoingChats());
+
+        incoming.start();
+        outgoing.start();
     }
 
     /**
@@ -311,18 +317,39 @@ public class ChatterboxClient {
         // Variable to track the response
         String res;
 
-        // Run repeaditly
         while (true) {
-            // Try to read the line coming in from the server
             try {
+                // Read the line from the server reader
                 res = serverReader.readLine();
-                userOutput.write((res + "\n").getBytes(StandardCharsets.UTF_8));
-                userOutput.flush();
+
+                // Check for null res
+                if (res == null) {
+                    writeUserOutput("Server disconnected.");
+                    System.exit(0);
+                }
+
+                // Not null, write to user output and flush
+                writeUserOutput(res);
             } catch (IOException e) {
-                // Exit if there is an IO exception
-                System.exit(0);
+                try {
+                    writeUserOutput("Connection lost.");
+                } catch (IOException f) {
+                    System.exit(0);
+                } finally {
+                    System.exit(0);
+                }
             }
         }
+    }
+
+    /**
+     * Private helper method to write to the user output and flush
+     * 
+     * @param msg
+     */
+    private void writeUserOutput(String msg) throws IOException {
+        userOutput.write((msg + "\n").getBytes(StandardCharsets.UTF_8));
+        userOutput.flush();
     }
 
     /**
@@ -340,7 +367,6 @@ public class ChatterboxClient {
     public void sendOutgoingChats() {
         // Use the userInput to read, NOT System.in directly
         // loop forever reading user input
-        // write to serverOutput
     }
 
     public String getHost() {
