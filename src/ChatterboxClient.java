@@ -126,8 +126,41 @@ public class ChatterboxClient {
      */
     public static ChatterboxOptions parseArgs(String[] args) throws IllegalArgumentException {
         // TODO: read args in the required order and return new ChatterboxOptions(host, port, username, password)
+        // Make sure the args are 4, throw exception otherwise
+        if (args.length != 4) {
+            throw new IllegalArgumentException();
+        }
+
+        // Variable to track the port number
+        int convertedPort;
+
+        // Try to convert the port number, catch if there is an issue
+        try {
+            // Convert the port into an integer and store its converted value
+            convertedPort = Integer.parseInt(args[1]);
+        } catch (NumberFormatException e) {
+            throw new IllegalArgumentException();
+        }
+
+        // Check if the port is in range/valid
+        if (!inRange(1, 65535, convertedPort)) {
+            throw new IllegalArgumentException();
+        } else {
+            return new ChatterboxOptions(args[0], convertedPort, args[2], args[3]);
+        }
         // Remove this exception
-        throw new UnsupportedOperationException("Argument parsing not yet implemented. Implement parseArgs and remove this exception");
+        // throw new UnsupportedOperationException("Argument parsing not yet implemented. Implement parseArgs and remove this exception");
+    }
+
+    /**
+     * A helper method that checks if a number is in range of two given numbers
+     * @param min the minimum integer value
+     * @param max the max integer value
+     * @param num the number to check if in range
+     * @return whether the target number is in range
+     */
+    private static boolean inRange(int min, int max, int num) {
+        return num >= min && num <= max;
     }
 
     /**
