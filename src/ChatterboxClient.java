@@ -133,7 +133,7 @@ public class ChatterboxClient {
         // TODO: read args in the required order and return new ChatterboxOptions(host, port, username, password)
         // Make sure the args are 4, throw exception otherwise
         if (args.length != 4) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("Invalid arguments, there must be 4 arguments.");
         }
 
         // Variable to track the port number
@@ -144,12 +144,12 @@ public class ChatterboxClient {
             // Convert the port into an integer and store its converted value
             convertedPort = Integer.parseInt(args[1]);
         } catch (NumberFormatException e) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("Invalid port number, please enter a valid port number.");
         }
 
         // Check if the port is in range/valid
         if (!inRange(1, 65535, convertedPort)) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("Invalid port number, please enter a valid port number.");
         } else {
             return new ChatterboxOptions(args[0], convertedPort, args[2], args[3]);
         }
@@ -256,8 +256,13 @@ public class ChatterboxClient {
         // send messages using serverWriter (don't forget to flush!)
         
         // Read and display any messages from the server
-        userOutput.write((serverReader.readLine() + "\n").getBytes(StandardCharsets.UTF_8));
-        userOutput.flush();
+        String serverMsg = serverReader.readLine();
+
+        // Only write the user if there is a message from the server
+        if (serverMsg != "") {
+            userOutput.write((serverMsg + "\n").getBytes(StandardCharsets.UTF_8));
+            userOutput.flush();
+        }
         
         // Write the username and password to the server and flush
         serverWriter.write(this.username + " " + this.password + "\n");
