@@ -9,8 +9,6 @@ import java.net.Socket;
 import java.nio.charset.StandardCharsets;
 import java.util.Scanner;
 
-import javax.imageio.IIOException;
-
 /**
  * A simple command-line chat client for the Chatterbox server.
  *
