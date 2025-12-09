@@ -260,8 +260,7 @@ public class ChatterboxClient {
 
         // Only write the user if there is a message from the server
         if (serverMsg != "") {
-            userOutput.write((serverMsg + "\n").getBytes(StandardCharsets.UTF_8));
-            userOutput.flush();
+            writeUserOutput(serverMsg + "\n");
         }
         
         // Write the username and password to the server and flush
@@ -274,8 +273,7 @@ public class ChatterboxClient {
         // Read any messages coming from the server
         if (serverResponse.startsWith("Welcome")){
             // Write the welcome message to the output
-            userOutput.write((serverResponse + "\n").getBytes(StandardCharsets.UTF_8));
-            userOutput.flush();
+            writeUserOutput(serverResponse + "\n");
             return;
         } else { throw new IllegalArgumentException(serverResponse); }
     }
